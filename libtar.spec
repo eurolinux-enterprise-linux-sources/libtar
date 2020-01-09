@@ -1,7 +1,7 @@
 Summary:        Tar file manipulation API
 Name:           libtar
 Version:        1.2.11
-Release:        17%{?dist}
+Release:        17%{?dist}.1
 License:        MIT
 Group:          System Environment/Libraries
 URL:            http://www.feep.net/libtar/
@@ -13,6 +13,7 @@ Patch3:         libtar-1.2.11-tar_header.patch
 Patch4:         libtar-bz595635.patch
 Patch5:         libtar-bz597154.patch
 Patch6:         libtar-bz729009.patch
+Patch7:         libtar-CVE-2013-4397.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:  zlib-devel libtool
 
@@ -41,6 +42,8 @@ developing applications that use %{name}.
 %patch4 -p1
 %patch5 -p1
 %patch6 -p1
+%patch7 -p1
+
 # set correct version for .so build
 %define ltversion %(echo %{version} | tr '.' ':')
 sed -i 's/-rpath $(libdir)/-rpath $(libdir) -version-number %{ltversion}/' \
@@ -93,6 +96,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Fri Oct 04 2013 Kamil Dudka <kdudka@redhat.com> - 1.2.11-17.el6_4.1
+- fix CVE-2013-4397: buffer overflows by expanding a specially-crafted archive
+
 * Thu Jan 26 2012 Kamil Dudka <kdudka@redhat.com> - 1.2.11-17
 - allow to extract debug-info from /usr/bin/libtar (#729009)
 
