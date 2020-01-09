@@ -1,7 +1,7 @@
 Summary:        Tar file manipulation API
 Name:           libtar
 Version:        1.2.11
-Release:        16%{?dist}
+Release:        17%{?dist}
 License:        MIT
 Group:          System Environment/Libraries
 URL:            http://www.feep.net/libtar/
@@ -9,9 +9,10 @@ Source0:        ftp://ftp.feep.net/pub/software/libtar/libtar-%{version}.tar.gz
 Patch0:         http://ftp.debian.org/debian/pool/main/libt/libtar/libtar_1.2.11-4.diff.gz
 Patch1:         libtar-1.2.11-missing-protos.patch
 Patch2:         libtar-macro.patch
-Patch3:		libtar-1.2.11-tar_header.patch
-Patch4:		libtar-bz595635.patch
-Patch5:		libtar-bz597154.patch
+Patch3:         libtar-1.2.11-tar_header.patch
+Patch4:         libtar-bz595635.patch
+Patch5:         libtar-bz597154.patch
+Patch6:         libtar-bz729009.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:  zlib-devel libtool
 
@@ -39,6 +40,7 @@ developing applications that use %{name}.
 %patch3 -p1 -b .tar_header
 %patch4 -p1
 %patch5 -p1
+%patch6 -p1
 # set correct version for .so build
 %define ltversion %(echo %{version} | tr '.' ':')
 sed -i 's/-rpath $(libdir)/-rpath $(libdir) -version-number %{ltversion}/' \
@@ -91,6 +93,9 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %changelog
+* Thu Jan 26 2012 Kamil Dudka <kdudka@redhat.com> - 1.2.11-17
+- allow to extract debug-info from /usr/bin/libtar (#729009)
+
 * Fri May 28 2010 Kamil Dudka <kdudka@redhat.com> - 1.2.11-16
 - fix memory leaks in libtar (#595635)
 - fix invalid dereference (#597154)
