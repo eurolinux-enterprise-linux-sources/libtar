@@ -1,7 +1,7 @@
 Summary:        Tar file manipulation API
 Name:           libtar
 Version:        1.2.11
-Release:        28%{?dist}
+Release:        29%{?dist}
 License:        MIT
 Group:          System Environment/Libraries
 URL:            http://www.feep.net/libtar/
@@ -14,6 +14,7 @@ Patch4:         libtar-1.2.11-mem-deref.patch
 Patch5:         libtar-1.2.11-fix-memleak.patch
 Patch6:         libtar-1.2.11-bz729009.patch
 Patch7:         libtar-1.2.11-CVE-2013-4397.patch
+Patch8:         libtar-1.2.11-bz785760.patch
 BuildRoot:      %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:  zlib-devel libtool
 
@@ -43,6 +44,7 @@ developing applications that use %{name}.
 %patch5 -p1 -b .fixmem
 %patch6 -p1
 %patch7 -p1
+%patch8 -p1
 
 # set correct version for .so build
 %global ltversion %(echo %{version} | tr '.' ':')
@@ -89,6 +91,9 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 
 %changelog
+* Tue Apr 21 2015 Kamil Dudka <kdudka@redhat.com> - 1.2.11-29
+- fix resource leaks found by cppcheck (#785760)
+
 * Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 1.2.11-28
 - Mass rebuild 2014-01-24
 

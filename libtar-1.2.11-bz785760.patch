@@ -1,0 +1,94 @@
+From 6595e6491a472bc4e7f81ed7fe2879c67b3873fe Mon Sep 17 00:00:00 2001
+From: Kamil Dudka <kdudka@redhat.com>
+Date: Tue, 7 Feb 2012 13:50:55 +0100
+Subject: [PATCH] libtar - rhbz #785760
+
+---
+ lib/append.c    |   14 ++++++++------
+ lib/extract.c   |    2 ++
+ libtar/libtar.c |    3 +++
+ 3 files changed, 13 insertions(+), 6 deletions(-)
+
+diff --git a/lib/append.c b/lib/append.c
+index 5489168..690202b 100644
+--- a/lib/append.c
++++ b/lib/append.c
+@@ -216,6 +216,7 @@ tar_append_regfile(TAR *t, char *realname)
+ 	int filefd;
+ 	int i, j;
+ 	size_t size;
++	int rv = -1;
+ 
+ 	filefd = open(realname, O_RDONLY);
+ 	if (filefd == -1)
+@@ -234,25 +235,26 @@ tar_append_regfile(TAR *t, char *realname)
+ 		{
+ 			if (j != -1)
+ 				errno = EINVAL;
+-			return -1;
++			goto fail;
+ 		}
+ 		if (tar_block_write(t, &block) == -1)
+-			return -1;
++			goto fail;
+ 	}
+ 
+ 	if (i > 0)
+ 	{
+ 		j = read(filefd, &block, i);
+ 		if (j == -1)
+-			return -1;
++			goto fail;
+ 		memset(&(block[i]), 0, T_BLOCKSIZE - i);
+ 		if (tar_block_write(t, &block) == -1)
+-			return -1;
++			goto fail;
+ 	}
+ 
++	rv = 0;
++fail:
+ 	close(filefd);
+-
+-	return 0;
++	return rv;
+ }
+ 
+ 
+diff --git a/lib/extract.c b/lib/extract.c
+index b783d87..b36d447 100644
+--- a/lib/extract.c
++++ b/lib/extract.c
+@@ -245,6 +245,7 @@ tar_extract_regfile(TAR *t, char *realname)
+ 		{
+ 			if (k != -1)
+ 				errno = EINVAL;
++			close(fdout);
+ 			free (pn);
+ 			return -1;
+ 		}
+@@ -253,6 +254,7 @@ tar_extract_regfile(TAR *t, char *realname)
+ 		if (write(fdout, buf,
+ 			  ((i > T_BLOCKSIZE) ? T_BLOCKSIZE : i)) == -1)
+ 		{
++			close(fdout);
+ 			free (pn);
+ 			return -1;
+ 		}
+diff --git a/libtar/libtar.c b/libtar/libtar.c
+index 83564c8..673c90e 100644
+--- a/libtar/libtar.c
++++ b/libtar/libtar.c
+@@ -83,7 +83,10 @@ gzopen_frontend(char *pathname, int oflags, int mode)
+ 		return -1;
+ 
+ 	if ((oflags & O_CREAT) && fchmod(fd, mode))
++	{
++		close(fd);
+ 		return -1;
++	}
+ 
+ 	gzf = gzdopen(fd, gzoflags);
+ 	if (!gzf)
+-- 
+1.7.1
+
