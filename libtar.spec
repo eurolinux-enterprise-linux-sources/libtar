@@ -1,7 +1,7 @@
 Summary:        Tar file manipulation API
 Name:           libtar
 Version:        1.2.11
-Release:        26%{?dist}
+Release:        28%{?dist}
 License:        MIT
 Group:          System Environment/Libraries
 URL:            http://www.feep.net/libtar/
@@ -89,6 +89,12 @@ rm $RPM_BUILD_ROOT%{_libdir}/*.la
 
 
 %changelog
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 1.2.11-28
+- Mass rebuild 2014-01-24
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 1.2.11-27
+- Mass rebuild 2013-12-27
+
 * Fri Oct 04 2013 Kamil Dudka <kdudka@redhat.com> - 1.2.11-26
 - fix CVE-2013-4397: buffer overflows by expanding a specially-crafted archive
 
